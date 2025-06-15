@@ -12,7 +12,6 @@ public class Main {
         System.out.println(map.get(1));
 
         map.put(1, "Goga");
-
         map.put(7, "Vita");
         map.put(15, "Grisha");
         map.put(17, "Inga");

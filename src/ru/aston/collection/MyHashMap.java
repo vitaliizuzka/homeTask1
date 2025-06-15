@@ -32,21 +32,30 @@ public class MyHashMap<K, V> {
 
     public V put(K key, V value) {
         Node<K, V> addNode = new Node<>(key, value);
-        currentSize++;
 
         if (loadFactor * hashTableSize < currentSize) {
             rebuildHashTable();
         }
 
         if (key == null) {
-            hashTable[0] = addNode;
-            return null;
+            if (hashTable[0] != null) {
+                V oldValue = hashTable[0].value;
+                hashTable[0].value = value;
+                return oldValue;
+            } else {
+                currentSize++;
+                hashTable[0] = addNode;
+                return null;
+            }
+
         }
 
         int insertPosition = findPosition(key);
 
-        if (hashTable[insertPosition] == null)
+        if (hashTable[insertPosition] == null){
+            currentSize++;
             hashTable[insertPosition] = addNode;
+        }
         else {
             Node<K, V> currentNode = hashTable[insertPosition];
             Node<K, V> prev = null;
@@ -58,6 +67,7 @@ public class MyHashMap<K, V> {
                 }
                 prev = currentNode;
             } while ((currentNode = currentNode.next) != null);
+            currentSize++;
             prev.next = addNode;
         }
         return null;
@@ -140,6 +150,10 @@ public class MyHashMap<K, V> {
     private int findPosition(K key) {
         int position = key.hashCode() % (hashTableSize - 1) + 1;
         return position;
+    }
+
+    public int size() {
+        return currentSize;
     }
 
 }
