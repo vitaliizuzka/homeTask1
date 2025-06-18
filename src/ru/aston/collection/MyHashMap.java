@@ -33,7 +33,7 @@ public class MyHashMap<K, V> {
     public V put(K key, V value) {
         Node<K, V> addNode = new Node<>(key, value);
 
-        if (loadFactor * hashTableSize < currentSize) {
+        if (currentSize >= loadFactor * hashTableSize) {
             rebuildHashTable();
         }
 
@@ -52,11 +52,10 @@ public class MyHashMap<K, V> {
 
         int insertPosition = findPosition(key);
 
-        if (hashTable[insertPosition] == null){
+        if (hashTable[insertPosition] == null) {
             currentSize++;
             hashTable[insertPosition] = addNode;
-        }
-        else {
+        } else {
             Node<K, V> currentNode = hashTable[insertPosition];
             Node<K, V> prev = null;
             do {
@@ -93,7 +92,6 @@ public class MyHashMap<K, V> {
         return null;
     }
 
-
     public V remove(K key) {
         V delValue = null;
 
@@ -103,6 +101,7 @@ public class MyHashMap<K, V> {
             } else {
                 delValue = hashTable[0].value;
                 hashTable[0] = null;
+                currentSize--;
                 return delValue;
             }
         }
@@ -115,6 +114,7 @@ public class MyHashMap<K, V> {
             if (hashTable[deletePosition].key.equals(key)) {
                 delValue = hashTable[deletePosition].value;
                 hashTable[deletePosition] = hashTable[deletePosition].next;
+                currentSize--;
                 return delValue;
             } else {
                 Node<K, V> currentNode = hashTable[deletePosition];
@@ -122,6 +122,7 @@ public class MyHashMap<K, V> {
                     if (currentNode.next != null && currentNode.next.key.equals(key)) {
                         delValue = currentNode.next.value;
                         currentNode.next = currentNode.next.next;
+                        currentSize--;
                         return delValue;
                     }
                 } while ((currentNode = currentNode.next) != null);
